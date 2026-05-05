@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Mr. Joseph's Shop Co.</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#1a4a7a;--brand-dark:#0f2d4a;--brand-light:#e8f0f8;--brand-mid:#2a6aaa;
+  --bg:#f4f6f9;--surface:#fff;--border:#dde2ea;
+  --text:#1a1d23;--muted:#6b7280;--success:#16a34a;--danger:#dc2626;
+  --r:12px;--rs:8px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+/* HEADER */
+.header{background:var(--brand);color:#fff;height:58px;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(0,0,0,.2)}
+.h-brand{display:flex;flex-direction:column;gap:1px}
+.h-name{font-size:16px;font-weight:700}
+.h-closed{font-size:10px;color:rgba(255,255,255,.6)}
+.h-back{font-size:12px;color:rgba(255,255,255,.8);text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:4px 12px;border-radius:20px}
+.h-back:hover{background:rgba(255,255,255,.15)}
+/* LAYOUT */
+.page{max-width:860px;margin:0 auto;padding:1.5rem}
+@media(max-width:640px){.page{padding:1rem}}
+/* STEPS */
+.steps{display:flex;align-items:center;margin-bottom:1.75rem}
+.step-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted)}
+.step-item.active{color:var(--brand)}
+.step-item.done{color:var(--success)}
+.step-num{width:28px;height:28px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.step-item.done .step-num{background:var(--success);border-color:var(--success);color:#fff}
+.step-item.active .step-num{background:var(--brand);border-color:var(--brand);color:#fff}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 8px}
+.step-line.done{background:var(--success)}
+/* TITLES */
+.sec-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.sec-sub{font-size:13px;color:var(--muted);margin-bottom:1.25rem}
+/* CATEGORY TABS */
+.cat-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem}
+.cat-tab{padding:6px 16px;font-size:13px;font-weight:500;border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.cat-tab:hover{border-color:var(--brand-mid);color:var(--brand)}
+.cat-tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+/* ITEM ROWS */
+.item-list{display:flex;flex-direction:column;gap:8px;margin-bottom:100px}
+.item-row{display:flex;align-items:center;gap:14px;background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:border-color .15s,background .15s;user-select:none}
+.item-row:hover{border-color:var(--brand-mid);background:#f8fafc}
+.item-row.checked{border-color:var(--brand);background:var(--brand-light)}
+.check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .15s;color:transparent}
+.item-row.checked .check-box{background:var(--brand);border-color:var(--brand);color:#fff}
+.item-emoji{font-size:22px;flex-shrink:0}
+.item-label{flex:1;min-width:0}
+.item-name{font-size:14px;font-weight:600}
+.item-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.qty-wrap{display:flex;align-items:center;gap:6px;margin-top:6px}
+.qty-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s;line-height:1}
+.qty-btn:hover{background:var(--brand-light)}
+.qty-val{font-size:13px;font-weight:600;min-width:18px;text-align:center}
+.item-price-tag{font-size:14px;font-weight:700;color:var(--brand);flex-shrink:0}
+/* TOTAL BAR */
+.total-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 1.5rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 -4px 18px rgba(0,0,0,.09);z-index:50;gap:12px}
+.total-info{display:flex;flex-direction:column;gap:1px}
+.total-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.total-amount{font-size:22px;font-weight:700;color:var(--brand)}
+.total-items{font-size:11px;color:var(--muted)}
+.checkout-btn{padding:12px 28px;font-size:14px;font-weight:700;background:var(--brand);color:#fff;border:none;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;white-space:nowrap}
+.checkout-btn:hover{background:var(--brand-dark)}
+.checkout-btn:disabled{background:#b0bec5;cursor:not-allowed}
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
+.card h3{font-size:15px;font-weight:700;margin-bottom:1rem}
+/* FIELDS */
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:.7rem}
+.field-full{margin-bottom:.7rem}
+label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:3px}
+input[type=text],input[type=email],input[type=tel],select,textarea{width:100%;padding:9px 11px;font-size:13px;border:1px solid var(--border);border-radius:var(--rs);outline:none;font-family:'DM Sans',sans-serif;background:#fff;color:var(--text);transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(26,74,122,.08)}
+textarea{resize:vertical;min-height:70px}
+/* GIFT CARD */
+.gift-card-wrap{background:#fffbeb;border:1px solid #fcd34d;border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:12px}
+.gift-card-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+.gift-card-inner{flex:1}
+.gift-card-wrap label{color:#92400e;margin-bottom:4px}
+.gift-card-wrap input{border-color:#fcd34d}
+.gift-card-wrap input:focus{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.12)}
+/* SHIPPING */
+.ship-opt{display:flex;align-items:center;gap:9px;font-size:13px;padding:9px 0;cursor:pointer;border-bottom:1px solid var(--border)}
+.ship-opt:last-child{border-bottom:none}
+.ship-opt span{flex:1}
+.ship-price{font-weight:700}
+/* ORDER REVIEW */
+.order-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:4px 0}
+.order-total-row{display:flex;justify-content:space-between;font-size:15px;font-weight:700;padding-top:10px;margin-top:6px;border-top:1px solid var(--border)}
+/* BUTTONS */
+.place-btn{width:100%;padding:13px;font-size:15px;font-weight:700;background:var(--brand);color:#fff;border:none;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;margin-top:.5rem}
+.place-btn:hover{background:var(--brand-dark)}
+.place-btn:disabled{background:#b0bec5;cursor:not-allowed}
+.back-btn{background:none;border:none;color:var(--brand);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:1rem;padding:0;font-family:'DM Sans',sans-serif}
+.back-btn:hover{text-decoration:underline}
+.note{text-align:center;font-size:12px;color:var(--muted);margin-top:.65rem;line-height:1.5}
+/* SUCCESS */
+.success-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r)}
+.success-box{text-align:center;padding:3rem 2rem}
+.success-circle{width:68px;height:68px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:30px;color:var(--success)}
+.success-box h2{font-size:24px;font-weight:700;margin-bottom:.5rem}
+.success-box p{font-size:14px;color:var(--muted);margin-bottom:1.75rem;line-height:1.6}
+.success-btns{display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto}
+.return-link{font-size:13px;color:var(--brand);text-decoration:none;font-weight:600}
+.return-link:hover{text-decoration:underline}
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--brand-dark);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:500;opacity:0;transition:all .3s ease;z-index:9999;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+/* VIEWS */
+#view-order,#view-checkout,#view-success{display:none}
+#view-order.active,#view-checkout.active,#view-success.active{display:block}
+@media(max-width:480px){.field-row{grid-template-columns:1fr}.total-amount{font-size:18px}.checkout-btn{padding:12px 16px;font-size:13px}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="h-brand">
+    <div class="h-name">Mr. Joseph's Shop Co.</div>
+    <div class="h-closed">Closed on Sundays</div>
+  </div>
+  <a href="https://www.mrjosephshopco.com/home" class="h-back">← Main Site</a>
+</header>
+
+<!-- ORDER VIEW -->
+<div id="view-order" class="active">
+  <div class="page">
+    <div class="sec-title">Place an Order</div>
+    <div class="sec-sub">Check the items you want — pick as many as you like! Your total updates live at the bottom.</div>
+    <div class="cat-tabs" id="cat-tabs"></div>
+    <div class="item-list" id="item-list"></div>
+  </div>
+  <div class="total-bar">
+    <div class="total-info">
+      <div class="total-label">YOUR TOTAL</div>
+      <div class="total-amount" id="live-total">$0.00</div>
+      <div class="total-items" id="live-items">0 items selected</div>
+    </div>
+    <button class="checkout-btn" id="checkout-btn" onclick="goCheckout()" disabled>Checkout</button>
+  </div>
+</div>
+
+<!-- CHECKOUT VIEW -->
+<div id="view-checkout">
+  <div class="page" style="padding-bottom:2rem">
+    <div class="steps">
+      <div class="step-item active" id="sitem-1"><div class="step-num" id="snum-1">1</div><span>Your Info</span></div>
+      <div class="step-line" id="sline-1"></div>
+      <div class="step-item" id="sitem-2"><div class="step-num" id="snum-2">2</div><span>Review &amp; Place</span></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div id="co-1">
+      <div class="card">
+        <h3>Contact Information</h3>
+        <div class="field-full"><label>Full Name *</label><input type="text" id="f-name" placeholder="Jane Doe"/></div>
+        <div class="field-row">
+          <div><label>Email *</label><input type="email" id="f-email" placeholder="you@example.com"/></div>
+          <div><label>Phone</label><input type="tel" id="f-phone" placeholder="+1 (555) 000-0000"/></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Shipping Address</h3>
+        <div class="field-full"><label>Street Address *</label><input type="text" id="f-street" placeholder="123 Main St"/></div>
+        <div class="field-row">
+          <div><label>City *</label><input type="text" id="f-city" placeholder="Springfield"/></div>
+          <div><label>State *</label><input type="text" id="f-state" placeholder="IL"/></div>
+        </div>
+        <div class="field-row">
+          <div><label>ZIP Code *</label><input type="text" id="f-zip" placeholder="62701"/></div>
+          <div><label>Country</label>
+            <select id="f-country">
+              <option>United States</option><option>Canada</option><option>United Kingdom</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Shipping Method</h3>
+        <label class="ship-opt"><input type="radio" name="ship" value="Standard (5-7 days) - Free" checked/><span>Standard (5-7 days)</span><span class="ship-price">Free</span></label>
+        <label class="ship-opt"><input type="radio" name="ship" value="Express (2-3 days) - $9.99"/><span>Express (2-3 days)</span><span class="ship-price">$9.99</span></label>
+        <label class="ship-opt"><input type="radio" name="ship" value="Overnight (1 day) - $24.99"/><span>Overnight (1 day)</span><span class="ship-price">$24.99</span></label>
+      </div>
+      <div class="gift-card-wrap">
+        <div class="gift-card-icon">🎁</div>
+        <div class="gift-card-inner">
+          <label>Gift Card Number (optional)</label>
+          <input type="text" id="f-giftcard" placeholder="Enter your gift card number if you have one"/>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Notes (optional)</h3>
+        <textarea id="f-notes" placeholder="Any special requests, color preferences, or notes for your order..."></textarea>
+      </div>
+      <button class="place-btn" onclick="goReview()">Review My Order</button>
+      <p class="note">* Required fields</p>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="co-2" style="display:none">
+      <button class="back-btn" onclick="goBack()">Back to Edit</button>
+      <div class="card">
+        <h3>Your Details</h3>
+        <div id="review-contact" style="font-size:14px;line-height:2;color:var(--muted)"></div>
+      </div>
+      <div class="card">
+        <h3>Items Ordered</h3>
+        <div id="review-items"></div>
+        <div id="review-totals" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"></div>
+      </div>
+      <p class="note" style="margin-bottom:.85rem">
+        No card needed! We will contact you after receiving your order to arrange payment.<br>
+        We accept cash, gift cards, and other arrangements.
+      </p>
+      <button class="place-btn" id="place-btn" onclick="placeOrder()">Place My Order</button>
+      <p class="note">Your order goes directly to Mr. Joseph's Shop Co.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS VIEW -->
+<div id="view-success">
+  <div class="page">
+    <div class="success-card">
+      <div class="success-box">
+        <div class="success-circle">&#10003;</div>
+        <h2>Order Received!</h2>
+        <p>Thank you for ordering from Mr. Joseph's Shop Co.!<br>
+           We will reach out to you soon to arrange payment and confirm your order.</p>
+        <div class="success-btns">
+          <button class="place-btn" onclick="resetAll()">Place Another Order</button>
+          <a href="https://www.mrjosephshopco.com/home" class="return-link">Return to Mr. Joseph's Shop Co.</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var PRODUCTS=[
+  {id:6, name:'Fidget Toys',price:1.99,sub:'each',emoji:'🌀',cat:'Fidgets'},
+  {id:25,name:'Spiral Passthrough Fidget (Small)',price:3.00,sub:'cone or standard',emoji:'🌀',cat:'Fidgets'},
+  {id:26,name:'Spiral Passthrough Fidget (Big)',price:7.99,sub:'cone or standard',emoji:'🌀',cat:'Fidgets'},
+  {id:27,name:'Joy-Con Fidget',price:3.00,sub:'',emoji:'🕹️',cat:'Fidgets'},
+  {id:28,name:'Fidget Spinner',price:7.99,sub:'',emoji:'💫',cat:'Fidgets'},
+  {id:29,name:'Chicken Clicker',price:4.50,sub:'',emoji:'🐔',cat:'Fidgets'},
+  {id:30,name:'Infinity Cube',price:5.00,sub:'each',emoji:'🧊',cat:'Fidgets'},
+  {id:31,name:'Controller Fidget',price:6.00,sub:'',emoji:'🎮',cat:'Fidgets'},
+  {id:32,name:'Flex Slug',price:9.99,sub:'',emoji:'🐛',cat:'Fidgets'},
+  {id:33,name:'Twisty Dragon Scale Egg',price:15.00,sub:'',emoji:'🥚',cat:'Fidgets'},
+  {id:34,name:'Pencil Slingshot Fidget',price:3.99,sub:'',emoji:'✏️',cat:'Fidgets'},
+  {id:35,name:'Ring Spinner',price:2.50,sub:'',emoji:'💍',cat:'Fidgets'},
+  {id:36,name:'Airless Basketball (Mini)',price:15.00,sub:'mini size',emoji:'🏀',cat:'Airless Sports'},
+  {id:37,name:'Airless Basketball (Regular)',price:30.00,sub:'regular size',emoji:'🏀',cat:'Airless Sports'},
+  {id:38,name:'Airless Baseball',price:15.00,sub:'',emoji:'⚾',cat:'Airless Sports'},
+  {id:39,name:'Airless Baseball Bat',price:20.00,sub:'',emoji:'🪵',cat:'Airless Sports'},
+  {id:40,name:'Airless Football',price:25.00,sub:'',emoji:'🏈',cat:'Airless Sports'},
+  {id:41,name:'Airless Volleyball',price:30.00,sub:'',emoji:'🏐',cat:'Airless Sports'},
+  {id:42,name:'Airless Soccer Ball',price:35.99,sub:'',emoji:'⚽',cat:'Airless Sports'},
+  {id:1, name:'Fun Foam',price:10.00,sub:'',emoji:'🟦',cat:'Crafts'},
+  {id:2, name:'Pom Poms',price:10.00,sub:'per pack',emoji:'🎉',cat:'Crafts'},
+  {id:3, name:'Hobby Time Craft Box',price:14.99,sub:'',emoji:'📦',cat:'Crafts'},
+  {id:4, name:'Snap-Together Carry-All',price:7.99,sub:'',emoji:'🧰',cat:'Crafts'},
+  {id:5, name:'3-in-1 Craft Glue',price:6.99,sub:'',emoji:'🔧',cat:'Crafts'},
+  {id:7, name:'Gift Card',price:5.00,sub:'$5 to $100,000',emoji:'🎁',cat:'Crafts'},
+  {id:8, name:'Water Bottle',price:15.99,sub:'',emoji:'💧',cat:'Crafts'},
+  {id:9, name:'Dolphiney Mystery Box',price:1.00,sub:'per pack',emoji:'🐬',cat:'Crafts'},
+  {id:10,name:'Air Dry Clay',price:20.00,sub:'whole pack',emoji:'🏺',cat:'Crafts'},
+  {id:11,name:'Twisty Scissors',price:6.85,sub:'',emoji:'✂️',cat:'Crafts'},
+  {id:12,name:'Acrylic Paint Set',price:7.99,sub:'12 piece',emoji:'🎨',cat:'Crafts'},
+  {id:13,name:'Craft Foam Ball',price:3.99,sub:'1.3 inch size',emoji:'⚽',cat:'Crafts'},
+  {id:14,name:'Craft Clay Motor',price:25.99,sub:'',emoji:'⚙️',cat:'Crafts'},
+  {id:15,name:'Superhero Uniform Kit',price:19.99,sub:'',emoji:'🦸',cat:'Crafts'},
+  {id:16,name:'Heavy Duty Craft Knife',price:8.99,sub:'size 5',emoji:'🔪',cat:'Crafts'},
+  {id:17,name:'Side Cutters',price:9.00,sub:'',emoji:'🔩',cat:'Crafts'},
+  {id:18,name:'Long Nose Pliers',price:9.00,sub:'',emoji:'🪛',cat:'Crafts'},
+  {id:19,name:'Alligator Clips 6-Pack',price:9.99,sub:'bendable',emoji:'📎',cat:'Crafts'},
+  {id:20,name:'Craft Cord',price:8.99,sub:'',emoji:'🪢',cat:'Crafts'},
+  {id:21,name:'100 Colored Pencils',price:27.99,sub:'',emoji:'✏️',cat:'Crafts'},
+  {id:22,name:'Oil Pastels 50pc',price:15.00,sub:'',emoji:'🖍️',cat:'Crafts'},
+  {id:23,name:'Sketch Book',price:17.00,sub:'50 pages',emoji:'📓',cat:'Crafts'},
+  {id:24,name:'White Poster Board',price:15.00,sub:'22 by 30 inch',emoji:'🗒️',cat:'Crafts'},
+  {id:43,name:"Mother's Day Flowers (1)",price:3.00,sub:'single flower',emoji:'🌸',cat:'Seasonal'},
+  {id:44,name:"Mother's Day Flowers (2-Pack)",price:5.00,sub:'2 flowers',emoji:'💐',cat:'Seasonal'},
+  {id:45,name:'Mystery Box (Small)',price:10.00,sub:'surprise items inside',emoji:'🎁',cat:'Mystery Boxes'},
+  {id:46,name:'Mystery Box (Big)',price:15.00,sub:'surprise items inside',emoji:'📦',cat:'Mystery Boxes'}
+];
+
+var CATS=['All','Fidgets','Airless Sports','Crafts','Seasonal','Mystery Boxes'];
+var activeCat='All';
+var selected={};
+
+function renderCatTabs(){
+  document.getElementById('cat-tabs').innerHTML=CATS.map(function(c){
+    return '<button class="cat-tab'+(c===activeCat?' active':'')+'" onclick="setCat(\''+c+'\')">'+c+'</button>';
+  }).join('');
+}
+
+function setCat(c){activeCat=c;renderCatTabs();renderItems();}
+
+function renderItems(){
+  var list=activeCat==='All'?PRODUCTS:PRODUCTS.filter(function(p){return p.cat===activeCat;});
+  document.getElementById('item-list').innerHTML=list.map(function(p){
+    var qty=selected[p.id]||0;
+    var on=qty>0;
+    var html='<div class="item-row'+(on?' checked':'')+'" id="row-'+p.id+'" onclick="toggleItem('+p.id+')">';
+    html+='<div class="check-box">'+(on?'&#10003;':'')+'</div>';
+    html+='<div class="item-emoji">'+p.emoji+'</div>';
+    html+='<div class="item-label">';
+    html+='<div class="item-name">'+p.name+'</div>';
+    if(p.sub) html+='<div class="item-sub">'+p.sub+'</div>';
+    if(on){
+      html+='<div style="font-size:13px;font-weight:700;color:var(--brand);margin-top:3px;">$'+p.price.toFixed(2)+' each</div>';
+      html+='<div class="qty-wrap" onclick="event.stopPropagation()">';
+      html+='<button class="qty-btn" onclick="changeQty('+p.id+',-1)">&#8722;</button>';
+      html+='<span class="qty-val">'+qty+'</span>';
+      html+='<button class="qty-btn" onclick="changeQty('+p.id+',1)">&#43;</button>';
+      html+='</div>';
+    }
+    html+='</div>';
+    if(on) html+='<div class="item-price-tag">$'+(p.price*qty).toFixed(2)+'</div>';
+    html+='</div>';
+    return html;
+  }).join('');
+}
+
+function toggleItem(id){
+  if(selected[id]){delete selected[id];}else{selected[id]=1;}
+  renderItems();syncTotal();
+}
+
+function changeQty(id,d){
+  var q=(selected[id]||0)+d;
+  if(q<=0){delete selected[id];}else{selected[id]=q;}
+  renderItems();syncTotal();
+}
+
+function syncTotal(){
+  var total=0,count=0;
+  Object.keys(selected).forEach(function(id){
+    var p=PRODUCTS.find(function(x){return x.id==id;});
+    if(p){total+=p.price*selected[id];count+=selected[id];}
+  });
+  document.getElementById('live-total').textContent='$'+total.toFixed(2);
+  document.getElementById('live-items').textContent=count+(count===1?' item selected':' items selected');
+  document.getElementById('checkout-btn').disabled=count===0;
+}
+
+function goCheckout(){
+  if(!Object.keys(selected).length){showToast('Please select at least one item!');return;}
+  document.getElementById('co-1').style.display='block';
+  document.getElementById('co-2').style.display='none';
+  setStep(1);
+  showView('checkout');
+}
+
+function goReview(){
+  var name=fv('f-name'),email=fv('f-email'),street=fv('f-street'),city=fv('f-city'),state=fv('f-state'),zip=fv('f-zip');
+  if(!name||!email||!street||!city||!state||!zip){showToast('Please fill in all required fields');return;}
+  var phone=fv('f-phone'),country=document.getElementById('f-country').value;
+  var ship='Standard (5-7 days) - Free';
+  document.querySelectorAll('input[name=ship]').forEach(function(r){if(r.checked)ship=r.value;});
+  var gc=fv('f-giftcard'),notes=fv('f-notes');
+
+  var contactHtml='<strong>'+name+'</strong><br>Email: '+email;
+  if(phone) contactHtml+='<br>Phone: '+phone;
+  contactHtml+='<br>Ship to: '+street+', '+city+', '+state+' '+zip+', '+country;
+  contactHtml+='<br>Shipping: '+ship;
+  if(gc) contactHtml+='<br>Gift Card: '+gc;
+  if(notes) contactHtml+='<br>Notes: '+notes;
+  document.getElementById('review-contact').innerHTML=contactHtml;
+
+  var itemsHtml='';
+  var sub=0;
+  Object.keys(selected).forEach(function(id){
+    var p=PRODUCTS.find(function(x){return x.id==id;});
+    if(p){
+      var lineTotal=p.price*selected[id];
+      sub+=lineTotal;
+      itemsHtml+='<div class="order-row"><span>'+p.emoji+' '+p.name+(p.sub?' ('+p.sub+')':'')+' x'+selected[id]+'</span><span style="font-weight:700;color:var(--text)">$'+lineTotal.toFixed(2)+'</span></div>';
+    }
+  });
+  document.getElementById('review-items').innerHTML=itemsHtml;
+  document.getElementById('review-totals').innerHTML=
+    '<div class="order-row"><span>Subtotal</span><span>$'+sub.toFixed(2)+'</span></div>'+
+    '<div class="order-total-row"><span>Total</span><span>$'+sub.toFixed(2)+'</span></div>';
+
+  document.getElementById('co-1').style.display='none';
+  document.getElementById('co-2').style.display='block';
+  setStep(2);window.scrollTo(0,0);
+}
+
+function goBack(){
+  document.getElementById('co-1').style.display='block';
+  document.getElementById('co-2').style.display='none';
+  setStep(1);window.scrollTo(0,0);
+}
+
+function setStep(n){
+  [1,2].forEach(function(s){
+    var el=document.getElementById('sitem-'+s);
+    var nm=document.getElementById('snum-'+s);
+    if(s<n){el.className='step-item done';nm.textContent='✓';}
+    else if(s===n){el.className='step-item active';nm.textContent=s;}
+    else{el.className='step-item';nm.textContent=s;}
+  });
+  var ln=document.getElementById('sline-1');
+  if(ln) ln.className='step-line'+(n>=2?' done':'');
+}
+
+function placeOrder(){
+  var name=fv('f-name'),email=fv('f-email'),phone=fv('f-phone');
+  var street=fv('f-street'),city=fv('f-city'),state=fv('f-state'),zip=fv('f-zip');
+  var country=document.getElementById('f-country').value;
+  var ship='Standard (5-7 days) - Free';
+  document.querySelectorAll('input[name=ship]').forEach(function(r){if(r.checked)ship=r.value;});
+  var gc=fv('f-giftcard'),notes=fv('f-notes');
+
+  var itemLines=[];
+  var sub=0;
+  Object.keys(selected).forEach(function(id){
+    var p=PRODUCTS.find(function(x){return x.id==id;});
+    if(p){
+      sub+=p.price*selected[id];
+      itemLines.push(p.name+(p.sub?' ('+p.sub+')':'')+' x'+selected[id]+' = $'+(p.price*selected[id]).toFixed(2));
+    }
+  });
+
+  var btn=document.getElementById('place-btn');
+  btn.textContent='Sending...';btn.disabled=true;
+
+  var formData=new FormData();
+  formData.append('access_key','5876ff14-bac5-4498-a912-41c3c4b134cd');
+  formData.append('subject','New Order from '+name+' - $'+sub.toFixed(2));
+  formData.append('Customer Name',name);
+  formData.append('Email',email);
+  formData.append('Phone',phone||'Not provided');
+  formData.append('Ship To',street+', '+city+', '+state+' '+zip+', '+country);
+  formData.append('Shipping',ship);
+  formData.append('Gift Card',gc||'None');
+  formData.append('Items Ordered',itemLines.join('\n'));
+  formData.append('Order Total','$'+sub.toFixed(2));
+  formData.append('Notes',notes||'None');
+  formData.append('Order Date',new Date().toLocaleString());
+
+  fetch('https://api.web3forms.com/submit',{
+    method:'POST',
+    body:formData,
+    headers:{Accept:'application/json'}
+  }).then(function(res){
+    if(res.ok){
+      showView('success');
+    } else {
+      sendMailto(name,email,phone,street,city,state,zip,country,ship,gc,notes,itemLines,sub);
+    }
+  }).catch(function(){
+    sendMailto(name,email,phone,street,city,state,zip,country,ship,gc,notes,itemLines,sub);
+  });
+}
+
+function sendMailto(name,email,phone,street,city,state,zip,country,ship,gc,notes,itemLines,sub){
+  var body='Customer: '+name+'\n'+
+    'Email: '+email+'\n'+
+    'Phone: '+(phone||'N/A')+'\n'+
+    'Ship To: '+street+', '+city+', '+state+' '+zip+', '+country+'\n'+
+    'Shipping: '+ship+'\n'+
+    'Gift Card: '+(gc||'None')+'\n\n'+
+    'ITEMS ORDERED:\n'+itemLines.join('\n')+'\n\n'+
+    'Total: $'+sub.toFixed(2)+'\n'+
+    'Notes: '+(notes||'None')+'\n'+
+    'Date: '+new Date().toLocaleString();
+  var subject='New Order from '+name+' - $'+sub.toFixed(2);
+  window.open('mailto:graciebooks30@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body));
+  setTimeout(function(){showView('success');},600);
+}
+
+function resetAll(){
+  selected={};syncTotal();renderItems();
+  var fields=['f-name','f-email','f-phone','f-street','f-city','f-state','f-zip','f-giftcard','f-notes'];
+  fields.forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  showView('order');
+}
+
+function showView(vw){
+  ['order','checkout','success'].forEach(function(x){
+    document.getElementById('view-'+x).classList.toggle('active',x===vw);
+  });
+  window.scrollTo(0,0);
+}
+
+function fv(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2500);
+}
+
+renderCatTabs();
+renderItems();
+</script>
+</body>
+</html>
