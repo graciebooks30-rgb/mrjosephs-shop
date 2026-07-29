@@ -366,21 +366,5 @@
     "sub": "surprise items inside",
     "emoji": "📦",
     "cat": "Mystery Boxes"
-  },
-  {
-    "id": 48,
-    "name": "I don't care",
-    "price": 5,
-    "sub": "",
-    "emoji": "🧪",
-    "cat": "Mystery Boxes"
-  },
-  {
-    "id": 49,
-    "name": "Awesome Angle Iron",
-    "price": 100,
-    "sub": "",
-    "emoji": "📐",
-    "cat": "Crafts"
   }
 ]
