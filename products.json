@@ -336,34 +336,10 @@
     "cat": "Crafts"
   },
   {
-    "id": 43,
-    "name": "Mother's Day Flowers (1)",
-    "price": 3,
-    "sub": "single flower",
-    "emoji": "🌸",
-    "cat": "Seasonal"
-  },
-  {
-    "id": 44,
-    "name": "Mother's Day Flowers (2-Pack)",
-    "price": 5,
-    "sub": "2 flowers",
-    "emoji": "💐",
-    "cat": "Seasonal"
-  },
-  {
     "id": 45,
-    "name": "Mystery Box (Small)",
-    "price": 10,
-    "sub": "surprise items inside",
-    "emoji": "🎁",
-    "cat": "Mystery Boxes"
-  },
-  {
-    "id": 46,
-    "name": "Mystery Box (Big)",
-    "price": 15,
-    "sub": "surprise items inside",
+    "name": "Mr. Box",
+    "price": 2.99,
+    "sub": "Surprise 3d prints inside",
     "emoji": "📦",
     "cat": "Mystery Boxes"
   }
