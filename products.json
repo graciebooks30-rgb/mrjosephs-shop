@@ -366,5 +366,13 @@
     "sub": "surprise items inside",
     "emoji": "📦",
     "cat": "Mystery Boxes"
+  },
+  {
+    "id": 47,
+    "name": "Logan's Lemonade Holder",
+    "price": 199.98,
+    "sub": "",
+    "emoji": ":-)",
+    "cat": "Fidgets"
   }
 ]
