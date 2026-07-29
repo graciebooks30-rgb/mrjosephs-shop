@@ -44,5 +44,6 @@
   {"id":43,"name":"Mother's Day Flowers (1)","price":3.00,"sub":"single flower","emoji":"🌸","cat":"Seasonal"},
   {"id":44,"name":"Mother's Day Flowers (2-Pack)","price":5.00,"sub":"2 flowers","emoji":"💐","cat":"Seasonal"},
   {"id":45,"name":"Mystery Box (Small)","price":10.00,"sub":"surprise items inside","emoji":"🎁","cat":"Mystery Boxes"},
-  {"id":46,"name":"Mystery Box (Big)","price":15.00,"sub":"surprise items inside","emoji":"📦","cat":"Mystery Boxes"}
+  {"id":46,"name":"Mystery Box (Big)","price":15.00,"sub":"surprise items inside","emoji":"📦","cat":"Mystery Boxes"},
+    {"id":47,"name":"Test Item","price":1.00,"sub":"","emoji":"🧪","cat":"Mystery Boxes"}
 ]
