@@ -342,5 +342,29 @@
     "sub": "Surprise 3d prints inside",
     "emoji": "📦",
     "cat": "Mystery Boxes"
+  },
+  {
+    "id": 46,
+    "name": "Shirts",
+    "price": 20,
+    "sub": "Blue comfy cotton shirt",
+    "emoji": "👕",
+    "cat": "Merch"
+  },
+  {
+    "id": 47,
+    "name": "Black Hat ",
+    "price": 15,
+    "sub": "Comfy black trucker hat",
+    "emoji": "🧢",
+    "cat": "Merch"
+  },
+  {
+    "id": 48,
+    "name": "Red Hat",
+    "price": 15,
+    "sub": "Comfy red trucker hat",
+    "emoji": "🧢",
+    "cat": "Merch"
   }
 ]
