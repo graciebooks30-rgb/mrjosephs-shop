@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Shop Admin — Mr. Joseph's Shop Co.</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#1a4a7a;--brand-dark:#0f2d4a;--brand-light:#e8f0f8;--brand-mid:#2a6aaa;
+  --bg:#f4f6f9;--surface:#fff;--border:#dde2ea;
+  --text:#1a1d23;--muted:#6b7280;--success:#16a34a;--danger:#dc2626;--r:12px;--rs:8px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:var(--brand);color:#fff;height:58px;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(0,0,0,.2)}
+.h-name{font-size:16px;font-weight:700}
+.h-back{font-size:12px;color:rgba(255,255,255,.8);text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:4px 12px;border-radius:20px}
+.h-back:hover{background:rgba(255,255,255,.15)}
+.page{max-width:900px;margin:0 auto;padding:1.5rem 1.5rem 4rem}
+@media(max-width:640px){.page{padding:1rem 1rem 4rem}}
+.sec-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.sec-sub{font-size:13px;color:var(--muted);margin-bottom:1.25rem;line-height:1.6}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1.25rem}
+.card h3{font-size:15px;font-weight:700;margin-bottom:.75rem}
+label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:3px}
+input[type=text],input[type=password],input[type=number],select{
+  width:100%;padding:9px 11px;font-size:13px;border:1px solid var(--border);border-radius:var(--rs);
+  outline:none;font-family:'DM Sans',sans-serif;background:#fff;color:var(--text);transition:border-color .15s
+}
+input:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(26,74,122,.08)}
+.btn{padding:10px 20px;font-size:13px;font-weight:700;border:none;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-dark)}
+.btn-primary:disabled{background:#b0bec5;cursor:not-allowed}
+.btn-outline{background:#fff;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--brand-mid)}
+.btn-danger{background:#fff;border:1px solid #f3c6c6;color:var(--danger)}
+.btn-danger:hover{background:#fef2f2}
+.btn-sm{padding:6px 12px;font-size:12px}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:.5rem}
+.item-card{border:1px solid var(--border);border-radius:var(--rs);padding:1rem;margin-bottom:.75rem;background:#fbfcfe}
+.item-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:.6rem}
+.item-grid2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.6rem}
+@media(max-width:640px){.item-grid,.item-grid2{grid-template-columns:1fr}}
+.field{margin-bottom:0}
+.status{font-size:13px;padding:10px 14px;border-radius:var(--rs);margin-bottom:1rem;display:none}
+.status.show{display:block}
+.status.ok{background:#dcfce7;color:#14532d}
+.status.err{background:#fee2e2;color:#7f1d1d}
+.status.info{background:var(--brand-light);color:var(--brand-dark)}
+.token-gate{max-width:480px;margin:3rem auto}
+.muted-link{font-size:12px;color:var(--brand);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0}
+.cat-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
+.cat-chip{padding:5px 14px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:20px;background:#fff;color:var(--muted);cursor:pointer}
+.cat-chip.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="h-name">Shop Admin</div>
+  <a href="fresh.html" class="h-back">View Live Shop →</a>
+</header>
+
+<div class="page">
+
+  <!-- TOKEN GATE -->
+  <div id="gate" class="token-gate">
+    <div class="sec-title">Sign in to edit items</div>
+    <div class="sec-sub">Paste your GitHub access token below. It's saved only in this browser (never sent anywhere except GitHub) so you won't need to re-enter it next time. <span id="token-help-toggle" class="muted-link" onclick="toggleHelp()">How do I get a token?</span></div>
+    <div id="token-help" class="card" style="display:none;font-size:13px;line-height:1.8;color:var(--muted)">
+      1. Go to <strong>github.com/settings/personal-access-tokens/new</strong> (while logged into the account that owns this site's repo).<br>
+      2. Give it any name, e.g. "Shop Admin".<br>
+      3. Under <strong>Repository access</strong>, choose "Only select repositories" and pick <strong>mrjosephs-shop</strong>.<br>
+      4. Under <strong>Permissions → Repository permissions</strong>, set <strong>Contents</strong> to "Read and write".<br>
+      5. Click <strong>Generate token</strong> and copy it (starts with "github_pat_").<br>
+      6. Paste it below. Keep it private — anyone with it can edit this repo.
+    </div>
+    <div class="card">
+      <label>GitHub Access Token</label>
+      <input type="password" id="token-input" placeholder="github_pat_..."/>
+      <div class="row-actions">
+        <button class="btn btn-primary" onclick="saveToken()">Save &amp; Load Items</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN ADMIN UI -->
+  <div id="admin" style="display:none">
+    <div class="sec-title">Manage Items</div>
+    <div class="sec-sub">Add, edit, or delete items and prices. Changes go live on the shop page as soon as you click Save.</div>
+
+    <div id="status" class="status"></div>
+
+    <div class="row-actions" style="margin-bottom:1rem">
+      <button class="btn btn-outline btn-sm" onclick="reloadItems()">Reload from GitHub</button>
+      <button class="btn btn-outline btn-sm" onclick="forgetToken()">Sign out (forget token)</button>
+    </div>
+
+    <div class="cat-filter" id="cat-filter"></div>
+
+    <div id="item-editor"></div>
+
+    <button class="btn btn-outline" onclick="addItem()" style="margin-bottom:1.5rem">+ Add New Item</button>
+
+    <div class="card" style="position:sticky;bottom:1rem;box-shadow:0 4px 20px rgba(0,0,0,.12)">
+      <button class="btn btn-primary" id="save-btn" onclick="saveItems()" style="width:100%">Save Changes to Live Shop</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var OWNER='graciebooks30-rgb';
+var REPO='mrjosephs-shop';
+var BRANCH='main';
+var PATH='products.json';
+var TOKEN_KEY='mjs_admin_token';
+
+var items=[];
+var currentSha=null;
+var filterCat='All';
+
+function toggleHelp(){
+  var h=document.getElementById('token-help');
+  h.style.display=h.style.display==='none'?'block':'none';
+}
+
+function b64DecodeUnicode(str){
+  str=str.replace(/\n/g,'');
+  return decodeURIComponent(atob(str).split('').map(function(c){
+    return '%'+('00'+c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+}
+function b64EncodeUnicode(str){
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,function(match,p1){
+    return String.fromCharCode('0x'+p1);
+  }));
+}
+
+function getToken(){return localStorage.getItem(TOKEN_KEY)||'';}
+
+function saveToken(){
+  var t=document.getElementById('token-input').value.trim();
+  if(!t){showStatus('Please paste a token first.','err');return;}
+  localStorage.setItem(TOKEN_KEY,t);
+  document.getElementById('gate').style.display='none';
+  document.getElementById('admin').style.display='block';
+  reloadItems();
+}
+
+function forgetToken(){
+  localStorage.removeItem(TOKEN_KEY);
+  document.getElementById('admin').style.display='none';
+  document.getElementById('gate').style.display='block';
+  document.getElementById('token-input').value='';
+}
+
+function apiUrl(){
+  return 'https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+PATH+'?ref='+BRANCH;
+}
+
+function reloadItems(){
+  var token=getToken();
+  if(!token){document.getElementById('gate').style.display='block';document.getElementById('admin').style.display='none';return;}
+  showStatus('Loading items…','info');
+  fetch(apiUrl(),{
+    headers:{
+      'Authorization':'Bearer '+token,
+      'Accept':'application/vnd.github+json'
+    }
+  }).then(function(res){
+    if(res.status===401){throw new Error('That token was rejected. Please sign out and paste a valid token.');}
+    if(!res.ok){throw new Error('GitHub returned an error ('+res.status+'). Check the token has access to '+REPO+'.');}
+    return res.json();
+  }).then(function(data){
+    currentSha=data.sha;
+    items=JSON.parse(b64DecodeUnicode(data.content));
+    hideStatus();
+    renderCatFilter();
+    renderEditor();
+  }).catch(function(err){
+    showStatus(err.message,'err');
+  });
+}
+
+function uniqueCats(){
+  var seen={},cats=[];
+  items.forEach(function(p){if(p.cat&&!seen[p.cat]){seen[p.cat]=true;cats.push(p.cat);}});
+  return cats;
+}
+
+function renderCatFilter(){
+  var cats=['All'].concat(uniqueCats());
+  document.getElementById('cat-filter').innerHTML=cats.map(function(c){
+    return '<button type="button" class="cat-chip'+(c===filterCat?' active':'')+'" onclick="setFilter(\''+c.replace(/'/g,"\\'")+'\')">'+c+'</button>';
+  }).join('');
+}
+
+function setFilter(c){filterCat=c;renderCatFilter();renderEditor();}
+
+function renderEditor(){
+  var list=filterCat==='All'?items:items.filter(function(p){return p.cat===filterCat;});
+  if(!list.length){
+    document.getElementById('item-editor').innerHTML='<p style="color:var(--muted);font-size:13px;margin-bottom:1rem">No items in this category.</p>';
+    return;
+  }
+  var catOptions=uniqueCats();
+  document.getElementById('item-editor').innerHTML=list.map(function(p){
+    var idx=items.indexOf(p);
+    return ''+
+    '<div class="item-card">'+
+      '<div class="item-grid">'+
+        '<div class="field"><label>Item Name</label><input type="text" value="'+escAttr(p.name)+'" oninput="updateField('+idx+',\'name\',this.value)"/></div>'+
+        '<div class="field"><label>Price ($)</label><input type="number" step="0.01" min="0" value="'+p.price+'" oninput="updateField('+idx+',\'price\',parseFloat(this.value)||0)"/></div>'+
+        '<div class="field"><label>Emoji</label><input type="text" value="'+escAttr(p.emoji||'')+'" oninput="updateField('+idx+',\'emoji\',this.value)"/></div>'+
+      '</div>'+
+      '<div class="item-grid2">'+
+        '<div class="field"><label>Category</label><input type="text" list="cat-list" value="'+escAttr(p.cat||'')+'" oninput="updateField('+idx+',\'cat\',this.value)"/></div>'+
+        '<div class="field"><label>Note / Sub-label (optional)</label><input type="text" value="'+escAttr(p.sub||'')+'" oninput="updateField('+idx+',\'sub\',this.value)"/></div>'+
+      '</div>'+
+      '<div class="row-actions"><button type="button" class="btn btn-danger btn-sm" onclick="deleteItem('+idx+')">Delete Item</button></div>'+
+    '</div>';
+  }).join('')+'<datalist id="cat-list">'+catOptions.map(function(c){return '<option value="'+escAttr(c)+'">';}).join('')+'</datalist>';
+}
+
+function updateField(idx,field,value){
+  items[idx][field]=value;
+  if(field==='cat'){renderCatFilter();}
+}
+
+function deleteItem(idx){
+  if(!confirm('Delete "'+items[idx].name+'"? This will remove it from the live shop once you save.')) return;
+  items.splice(idx,1);
+  renderCatFilter();
+  renderEditor();
+}
+
+function addItem(){
+  var maxId=items.reduce(function(m,p){return Math.max(m,p.id||0);},0);
+  items.push({id:maxId+1,name:'New Item',price:0,sub:'',emoji:'🆕',cat:filterCat==='All'?(uniqueCats()[0]||'General'):filterCat});
+  renderEditor();
+  window.scrollTo(0,document.body.scrollHeight);
+}
+
+function escAttr(s){
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+function saveItems(){
+  var token=getToken();
+  if(!token){showStatus('Please sign in with a token first.','err');return;}
+  var bad=items.find(function(p){return !p.name||!p.cat;});
+  if(bad){showStatus('Every item needs at least a Name and a Category before saving.','err');return;}
+
+  var btn=document.getElementById('save-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Saving…';
+  showStatus('Saving to GitHub…','info');
+
+  var content=b64EncodeUnicode(JSON.stringify(items,null,2));
+
+  fetch(apiUrl().split('?')[0],{
+    method:'PUT',
+    headers:{
+      'Authorization':'Bearer '+token,
+      'Accept':'application/vnd.github+json',
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({
+      message:'Update products via admin page',
+      content:content,
+      sha:currentSha,
+      branch:BRANCH
+    })
+  }).then(function(res){
+    if(res.status===401){throw new Error('That token was rejected. Please sign out and paste a valid token.');}
+    if(!res.ok){return res.json().then(function(j){throw new Error(j.message||'Save failed ('+res.status+')');});}
+    return res.json();
+  }).then(function(data){
+    currentSha=data.content.sha;
+    showStatus('Saved! The live shop will reflect these changes right away.','ok');
+  }).catch(function(err){
+    showStatus(err.message,'err');
+  }).finally(function(){
+    btn.disabled=false;
+    btn.textContent='Save Changes to Live Shop';
+  });
+}
+
+function showStatus(msg,type){
+  var s=document.getElementById('status');
+  s.textContent=msg;
+  s.className='status show '+type;
+}
+function hideStatus(){
+  var s=document.getElementById('status');
+  s.className='status';
+}
+
+// init
+(function(){
+  var token=getToken();
+  if(token){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('admin').style.display='block';
+    reloadItems();
+  }
+})();
+</script>
+</body>
+</html>

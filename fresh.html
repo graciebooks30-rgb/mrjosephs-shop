@@ -114,6 +114,7 @@ textarea{resize:vertical;min-height:70px}
 /* VIEWS */
 #view-order,#view-checkout,#view-success{display:none}
 #view-order.active,#view-checkout.active,#view-success.active{display:block}
+.loading-msg{text-align:center;color:var(--muted);font-size:13px;padding:2rem 0}
 @media(max-width:480px){.field-row{grid-template-columns:1fr}.total-amount{font-size:18px}.checkout-btn{padding:12px 16px;font-size:13px}}
 </style>
 </head>
@@ -133,7 +134,7 @@ textarea{resize:vertical;min-height:70px}
     <div class="sec-title">Place an Order</div>
     <div class="sec-sub">Check the items you want — pick as many as you like! Your total updates live at the bottom.</div>
     <div class="cat-tabs" id="cat-tabs"></div>
-    <div class="item-list" id="item-list"></div>
+    <div class="item-list" id="item-list"><div class="loading-msg">Loading items…</div></div>
   </div>
   <div class="total-bar">
     <div class="total-info">
@@ -244,58 +245,33 @@ textarea{resize:vertical;min-height:70px}
 <div class="toast" id="toast"></div>
 
 <script>
-var PRODUCTS=[
-  {id:6, name:'Fidget Toys',price:1.99,sub:'each',emoji:'🌀',cat:'Fidgets'},
-  {id:25,name:'Spiral Passthrough Fidget (Small)',price:3.00,sub:'cone or standard',emoji:'🌀',cat:'Fidgets'},
-  {id:26,name:'Spiral Passthrough Fidget (Big)',price:7.99,sub:'cone or standard',emoji:'🌀',cat:'Fidgets'},
-  {id:27,name:'Joy-Con Fidget',price:3.00,sub:'',emoji:'🕹️',cat:'Fidgets'},
-  {id:28,name:'Fidget Spinner',price:7.99,sub:'',emoji:'💫',cat:'Fidgets'},
-  {id:29,name:'Chicken Clicker',price:4.50,sub:'',emoji:'🐔',cat:'Fidgets'},
-  {id:30,name:'Infinity Cube',price:5.00,sub:'each',emoji:'🧊',cat:'Fidgets'},
-  {id:31,name:'Controller Fidget',price:6.00,sub:'',emoji:'🎮',cat:'Fidgets'},
-  {id:32,name:'Flex Slug',price:9.99,sub:'',emoji:'🐛',cat:'Fidgets'},
-  {id:33,name:'Twisty Dragon Scale Egg',price:15.00,sub:'',emoji:'🥚',cat:'Fidgets'},
-  {id:34,name:'Pencil Slingshot Fidget',price:3.99,sub:'',emoji:'✏️',cat:'Fidgets'},
-  {id:35,name:'Ring Spinner',price:2.50,sub:'',emoji:'💍',cat:'Fidgets'},
-  {id:36,name:'Airless Basketball (Mini)',price:15.00,sub:'mini size',emoji:'🏀',cat:'Airless Sports'},
-  {id:37,name:'Airless Basketball (Regular)',price:30.00,sub:'regular size',emoji:'🏀',cat:'Airless Sports'},
-  {id:38,name:'Airless Baseball',price:15.00,sub:'',emoji:'⚾',cat:'Airless Sports'},
-  {id:39,name:'Airless Baseball Bat',price:20.00,sub:'',emoji:'🪵',cat:'Airless Sports'},
-  {id:40,name:'Airless Football',price:25.00,sub:'',emoji:'🏈',cat:'Airless Sports'},
-  {id:41,name:'Airless Volleyball',price:30.00,sub:'',emoji:'🏐',cat:'Airless Sports'},
-  {id:42,name:'Airless Soccer Ball',price:35.99,sub:'',emoji:'⚽',cat:'Airless Sports'},
-  {id:1, name:'Fun Foam',price:10.00,sub:'',emoji:'🟦',cat:'Crafts'},
-  {id:2, name:'Pom Poms',price:10.00,sub:'per pack',emoji:'🎉',cat:'Crafts'},
-  {id:3, name:'Hobby Time Craft Box',price:14.99,sub:'',emoji:'📦',cat:'Crafts'},
-  {id:4, name:'Snap-Together Carry-All',price:7.99,sub:'',emoji:'🧰',cat:'Crafts'},
-  {id:5, name:'3-in-1 Craft Glue',price:6.99,sub:'',emoji:'🔧',cat:'Crafts'},
-  {id:7, name:'Gift Card',price:5.00,sub:'$5 to $100,000',emoji:'🎁',cat:'Crafts'},
-  {id:8, name:'Water Bottle',price:15.99,sub:'',emoji:'💧',cat:'Crafts'},
-  {id:9, name:'Dolphiney Mystery Box',price:1.00,sub:'per pack',emoji:'🐬',cat:'Crafts'},
-  {id:10,name:'Air Dry Clay',price:20.00,sub:'whole pack',emoji:'🏺',cat:'Crafts'},
-  {id:11,name:'Twisty Scissors',price:6.85,sub:'',emoji:'✂️',cat:'Crafts'},
-  {id:12,name:'Acrylic Paint Set',price:7.99,sub:'12 piece',emoji:'🎨',cat:'Crafts'},
-  {id:13,name:'Craft Foam Ball',price:3.99,sub:'1.3 inch size',emoji:'⚽',cat:'Crafts'},
-  {id:14,name:'Craft Clay Motor',price:25.99,sub:'',emoji:'⚙️',cat:'Crafts'},
-  {id:15,name:'Superhero Uniform Kit',price:19.99,sub:'',emoji:'🦸',cat:'Crafts'},
-  {id:16,name:'Heavy Duty Craft Knife',price:8.99,sub:'size 5',emoji:'🔪',cat:'Crafts'},
-  {id:17,name:'Side Cutters',price:9.00,sub:'',emoji:'🔩',cat:'Crafts'},
-  {id:18,name:'Long Nose Pliers',price:9.00,sub:'',emoji:'🪛',cat:'Crafts'},
-  {id:19,name:'Alligator Clips 6-Pack',price:9.99,sub:'bendable',emoji:'📎',cat:'Crafts'},
-  {id:20,name:'Craft Cord',price:8.99,sub:'',emoji:'🪢',cat:'Crafts'},
-  {id:21,name:'100 Colored Pencils',price:27.99,sub:'',emoji:'✏️',cat:'Crafts'},
-  {id:22,name:'Oil Pastels 50pc',price:15.00,sub:'',emoji:'🖍️',cat:'Crafts'},
-  {id:23,name:'Sketch Book',price:17.00,sub:'50 pages',emoji:'📓',cat:'Crafts'},
-  {id:24,name:'White Poster Board',price:15.00,sub:'22 by 30 inch',emoji:'🗒️',cat:'Crafts'},
-  {id:43,name:"Mother's Day Flowers (1)",price:3.00,sub:'single flower',emoji:'🌸',cat:'Seasonal'},
-  {id:44,name:"Mother's Day Flowers (2-Pack)",price:5.00,sub:'2 flowers',emoji:'💐',cat:'Seasonal'},
-  {id:45,name:'Mystery Box (Small)',price:10.00,sub:'surprise items inside',emoji:'🎁',cat:'Mystery Boxes'},
-  {id:46,name:'Mystery Box (Big)',price:15.00,sub:'surprise items inside',emoji:'📦',cat:'Mystery Boxes'}
-];
-
-var CATS=['All','Fidgets','Airless Sports','Crafts','Seasonal','Mystery Boxes'];
+var PRODUCTS=[];
+var CATS=['All'];
 var activeCat='All';
 var selected={};
+
+function loadProducts(){
+  fetch('products.json',{cache:'no-store'})
+    .then(function(res){
+      if(!res.ok) throw new Error('Failed to load products.json');
+      return res.json();
+    })
+    .then(function(data){
+      PRODUCTS=data;
+      var seen={};
+      var cats=['All'];
+      PRODUCTS.forEach(function(p){
+        if(p.cat && !seen[p.cat]){seen[p.cat]=true;cats.push(p.cat);}
+      });
+      CATS=cats;
+      renderCatTabs();
+      renderItems();
+    })
+    .catch(function(err){
+      document.getElementById('item-list').innerHTML='<div class="loading-msg">Sorry, items could not be loaded right now. Please refresh the page.</div>';
+      console.error(err);
+    });
+}
 
 function renderCatTabs(){
   document.getElementById('cat-tabs').innerHTML=CATS.map(function(c){
@@ -307,6 +283,10 @@ function setCat(c){activeCat=c;renderCatTabs();renderItems();}
 
 function renderItems(){
   var list=activeCat==='All'?PRODUCTS:PRODUCTS.filter(function(p){return p.cat===activeCat;});
+  if(!list.length){
+    document.getElementById('item-list').innerHTML='<div class="loading-msg">No items in this category yet.</div>';
+    return;
+  }
   document.getElementById('item-list').innerHTML=list.map(function(p){
     var qty=selected[p.id]||0;
     var on=qty>0;
@@ -503,8 +483,7 @@ function showToast(msg){
   setTimeout(function(){t.classList.remove('show');},2500);
 }
 
-renderCatTabs();
-renderItems();
+loadProducts();
 </script>
 </body>
 </html>
