@@ -256,14 +256,6 @@
     "cat": "Crafts"
   },
   {
-    "id": 15,
-    "name": "Superhero Uniform Kit",
-    "price": 19.99,
-    "sub": "",
-    "emoji": "🦸",
-    "cat": "Crafts"
-  },
-  {
     "id": 16,
     "name": "Heavy Duty Craft Knife",
     "price": 8.99,
