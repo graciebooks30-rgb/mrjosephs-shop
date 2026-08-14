@@ -98,7 +98,7 @@
   {
     "id": 36,
     "name": "Airless Basketball (Mini)",
-    "price": 15,
+    "price": 10,
     "sub": "mini size",
     "emoji": "🏀",
     "cat": "Airless Sports"
@@ -106,7 +106,7 @@
   {
     "id": 37,
     "name": "Airless Basketball (Regular)",
-    "price": 30,
+    "price": 20,
     "sub": "regular size",
     "emoji": "🏀",
     "cat": "Airless Sports"
@@ -114,7 +114,7 @@
   {
     "id": 38,
     "name": "Airless Baseball",
-    "price": 15,
+    "price": 6.99,
     "sub": "",
     "emoji": "⚾",
     "cat": "Airless Sports"
@@ -130,7 +130,7 @@
   {
     "id": 40,
     "name": "Airless Football",
-    "price": 25,
+    "price": 20,
     "sub": "",
     "emoji": "🏈",
     "cat": "Airless Sports"
@@ -138,7 +138,7 @@
   {
     "id": 41,
     "name": "Airless Volleyball",
-    "price": 30,
+    "price": 20,
     "sub": "",
     "emoji": "🏐",
     "cat": "Airless Sports"
@@ -146,7 +146,7 @@
   {
     "id": 42,
     "name": "Airless Soccer Ball",
-    "price": 35.99,
+    "price": 25.99,
     "sub": "",
     "emoji": "⚽",
     "cat": "Airless Sports"
