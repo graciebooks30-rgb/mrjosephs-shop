@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Orders — Mr. Joseph's Shop Co.</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#1a4a7a;--brand-dark:#0f2d4a;--brand-light:#e8f0f8;--brand-mid:#2a6aaa;
+  --bg:#f4f6f9;--surface:#fff;--border:#dde2ea;
+  --text:#1a1d23;--muted:#6b7280;--success:#16a34a;--danger:#dc2626;--r:12px;--rs:8px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:var(--brand);color:#fff;height:58px;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(0,0,0,.2)}
+.h-name{font-size:16px;font-weight:700}
+.h-back{font-size:12px;color:rgba(255,255,255,.8);text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:4px 12px;border-radius:20px}
+.h-back:hover{background:rgba(255,255,255,.15)}
+.page{max-width:900px;margin:0 auto;padding:1.5rem 1.5rem 4rem}
+@media(max-width:640px){.page{padding:1rem 1rem 4rem}}
+.sec-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.sec-sub{font-size:13px;color:var(--muted);margin-bottom:1.25rem;line-height:1.6}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1.25rem}
+label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:3px}
+input[type=text],input[type=password],input[type=date]{
+  width:100%;padding:9px 11px;font-size:13px;border:1px solid var(--border);border-radius:var(--rs);
+  outline:none;font-family:'DM Sans',sans-serif;background:#fff;color:var(--text)
+}
+input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(26,74,122,.08)}
+textarea{width:100%;padding:9px 11px;font-size:13px;border:1px solid var(--border);border-radius:var(--rs);outline:none;font-family:'DM Sans',sans-serif;min-height:70px;resize:vertical}
+.btn{padding:10px 20px;font-size:13px;font-weight:700;border:none;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-dark)}
+.btn-primary:disabled{background:#b0bec5;cursor:not-allowed}
+.btn-outline{background:#fff;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--brand-mid)}
+.btn-danger{background:#fff;border:1px solid #f3c6c6;color:var(--danger)}
+.btn-danger:hover{background:#fef2f2}
+.btn-sm{padding:6px 12px;font-size:12px}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:.6rem}
+.pin-gate{max-width:360px;margin:4rem auto}
+.status{font-size:13px;padding:10px 14px;border-radius:var(--rs);margin-bottom:1rem;display:none}
+.status.show{display:block}
+.status.ok{background:#dcfce7;color:#14532d}
+.status.err{background:#fee2e2;color:#7f1d1d}
+.status.info{background:var(--brand-light);color:var(--brand-dark)}
+.order-card{border:1px solid var(--border);border-radius:var(--r);padding:1.1rem;margin-bottom:1rem;background:#fbfcfe}
+.order-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:.5rem}
+.order-name{font-size:15px;font-weight:700}
+.order-date{font-size:11px;color:var(--muted)}
+.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.badge-pending{background:#fef3c7;color:#92400e}
+.badge-shipped{background:#dcfce7;color:#14532d}
+.order-line{font-size:13px;color:var(--muted);margin:2px 0}
+.order-items{font-size:13px;white-space:pre-line;background:#fff;border:1px solid var(--border);border-radius:var(--rs);padding:.6rem .8rem;margin:.6rem 0}
+.order-total{font-weight:700;color:var(--brand)}
+.action-block{border-top:1px solid var(--border);margin-top:.75rem;padding-top:.75rem;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.delete-panel{display:none;background:#fff5f5;border:1px solid #f3c6c6;border-radius:var(--rs);padding:.8rem;margin-top:.6rem}
+.delete-panel.show{display:block}
+.delete-choice{display:flex;gap:8px;margin-bottom:.6rem;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="h-name">Orders</div>
+  <a href="fresh.html" class="h-back">View Live Shop →</a>
+</header>
+
+<div class="page">
+
+  <!-- PIN GATE -->
+  <div id="gate" class="pin-gate">
+    <div class="sec-title">Enter PIN</div>
+    <div class="sec-sub">Enter your PIN to view and manage orders.</div>
+    <div class="card">
+      <label>PIN</label>
+      <input type="password" id="pin-input" inputmode="numeric" placeholder="••••••"/>
+      <div class="row-actions">
+        <button class="btn btn-primary" onclick="unlock()" style="width:100%">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDERS VIEW -->
+  <div id="orders-view" style="display:none">
+    <div class="sec-title">Orders</div>
+    <div class="sec-sub">Set a delivery date to notify a customer, or delete an order (with an optional reason emailed to them).</div>
+
+    <div id="status" class="status"></div>
+
+    <div class="row-actions" style="margin-bottom:1rem">
+      <button class="btn btn-outline btn-sm" onclick="loadOrders()">Refresh</button>
+      <button class="btn btn-outline btn-sm" onclick="lock()">Lock</button>
+    </div>
+
+    <div id="order-list"></div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+/* ---- Orders backend (Cloudflare Worker) ---- */
+// The GitHub token lives only on the server side now (Cloudflare Worker secret),
+// never in this page. This page only ever sends the PIN, which the Worker checks.
+var ORDERS_API = 'https://white-night-1274.brad-books78.workers.dev';
+
+/* ---- EmailJS (fill in after EmailJS + Gmail App Password setup) ---- */
+var EMAILJS_PUBLIC_KEY   = 'PASTE_EMAILJS_PUBLIC_KEY';
+var EMAILJS_SERVICE_ID   = 'PASTE_EMAILJS_SERVICE_ID';
+var EMAILJS_TEMPLATE_DELIVERY = 'PASTE_DELIVERY_TEMPLATE_ID';
+var EMAILJS_TEMPLATE_CANCEL   = 'PASTE_CANCEL_TEMPLATE_ID';
+
+var PIN = '071714';
+var PIN_KEY = 'mjs_orders_pin_ok';
+var orders = [];
+
+if (window.emailjs) { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+
+function unlock(){
+  var pin = document.getElementById('pin-input').value.trim();
+  if(pin !== PIN){ showStatus('Incorrect PIN.','err'); return; }
+  sessionStorage.setItem(PIN_KEY, '1');
+  document.getElementById('gate').style.display='none';
+  document.getElementById('orders-view').style.display='block';
+  loadOrders();
+}
+
+function lock(){
+  sessionStorage.removeItem(PIN_KEY);
+  document.getElementById('orders-view').style.display='none';
+  document.getElementById('gate').style.display='block';
+  document.getElementById('pin-input').value='';
+}
+
+function loadOrders(){
+  showStatus('Loading orders…','info');
+  fetch(ORDERS_API+'/api/orders?pin='+encodeURIComponent(PIN))
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      if(!data.success) throw new Error(data.error || 'Could not load orders.');
+      orders = data.orders || [];
+      hideStatus();
+      renderOrders();
+    })
+    .catch(function(err){
+      showStatus(err.message,'err');
+    });
+}
+
+function renderOrders(){
+  var list = document.getElementById('order-list');
+  if(!orders.length){
+    list.innerHTML = '<p style="color:var(--muted);font-size:13px">No orders yet.</p>';
+    return;
+  }
+  // newest first
+  var ordered = orders.map(function(o, i){ return {o:o, i:i}; }).reverse();
+
+  list.innerHTML = ordered.map(function(entry){
+    var o = entry.o, idx = entry.i;
+    var statusBadge = o.status === 'Shipped'
+      ? '<span class="badge badge-shipped">Shipped'+(o.deliveryDate ? ' · '+esc(o.deliveryDate) : '')+'</span>'
+      : '<span class="badge badge-pending">Pending</span>';
+    return ''+
+    '<div class="order-card">'+
+      '<div class="order-top">'+
+        '<div>'+
+          '<div class="order-name">'+esc(o.name)+'</div>'+
+          '<div class="order-date">'+esc(formatDate(o.date))+'</div>'+
+        '</div>'+
+        statusBadge+
+      '</div>'+
+      '<div class="order-line">Email: '+esc(o.email)+(o.phone ? ' · Phone: '+esc(o.phone) : '')+'</div>'+
+      '<div class="order-line">Ship to: '+esc(o.address)+'</div>'+
+      '<div class="order-line">Shipping: '+esc(o.shipping)+(o.giftcard ? ' · Gift card: '+esc(o.giftcard) : '')+'</div>'+
+      '<div class="order-items">'+esc(o.items)+'</div>'+
+      '<div class="order-line order-total">Total: '+esc(o.total)+'</div>'+
+      (o.notes ? '<div class="order-line">Notes: '+esc(o.notes)+'</div>' : '')+
+
+      '<div class="action-block">'+
+        '<div>'+
+          '<label>Delivery date</label>'+
+          '<input type="date" id="date-'+idx+'" value="'+esc(o.deliveryDate||'')+'"/>'+
+        '</div>'+
+        '<button class="btn btn-primary btn-sm" onclick="sendDeliveryDate('+idx+')">Send Delivery Update</button>'+
+        '<button class="btn btn-danger btn-sm" onclick="toggleDeletePanel('+idx+')">Delete Order</button>'+
+      '</div>'+
+
+      '<div class="delete-panel" id="delpanel-'+idx+'">'+
+        '<div class="delete-choice">'+
+          '<label style="display:flex;align-items:center;gap:6px;font-weight:400;color:var(--text)"><input type="radio" name="delmode-'+idx+'" value="silent" checked onchange="toggleReason('+idx+')"/> Just delete</label>'+
+          '<label style="display:flex;align-items:center;gap:6px;font-weight:400;color:var(--text)"><input type="radio" name="delmode-'+idx+'" value="notify" onchange="toggleReason('+idx+')"/> Delete and tell them why</label>'+
+        '</div>'+
+        '<div id="reasonwrap-'+idx+'" style="display:none;margin-bottom:.6rem">'+
+          '<label>Reason (emailed to the customer)</label>'+
+          '<textarea id="reason-'+idx+'" placeholder="e.g. This item is out of stock and unavailable."></textarea>'+
+        '</div>'+
+        '<div class="row-actions">'+
+          '<button class="btn btn-danger btn-sm" onclick="confirmDelete('+idx+')">Confirm Delete</button>'+
+          '<button class="btn btn-outline btn-sm" onclick="toggleDeletePanel('+idx+')">Cancel</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleDeletePanel(idx){
+  document.getElementById('delpanel-'+idx).classList.toggle('show');
+}
+function toggleReason(idx){
+  var mode = document.querySelector('input[name="delmode-'+idx+'"]:checked').value;
+  document.getElementById('reasonwrap-'+idx).style.display = (mode === 'notify') ? 'block' : 'none';
+}
+
+function sendDeliveryDate(idx){
+  var date = document.getElementById('date-'+idx).value;
+  if(!date){ showStatus('Please pick a date first.','err'); return; }
+
+  var o = orders[idx];
+  showStatus('Saving and sending update…','info');
+
+  fetch(ORDERS_API+'/api/orders/update',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ pin: PIN, id: o.id, date: date })
+  }).then(function(res){ return res.json(); })
+    .then(function(data){
+      if(!data.success) throw new Error(data.error || 'Save failed.');
+      return sendEmail(EMAILJS_TEMPLATE_DELIVERY, {
+        to_email: o.email,
+        to_name: o.name,
+        delivery_date: date
+      });
+    }).then(function(){
+      showStatus('Delivery date sent to customer!','ok');
+      loadOrders();
+    }).catch(function(err){
+      showStatus(err.message || 'Something went wrong.','err');
+    });
+}
+
+function confirmDelete(idx){
+  var o = orders[idx];
+  var mode = document.querySelector('input[name="delmode-'+idx+'"]:checked').value;
+  var sendNotify = (mode === 'notify');
+  var reason = sendNotify ? document.getElementById('reason-'+idx).value.trim() : '';
+
+  if(sendNotify && !reason){ showStatus('Please add a reason, or choose "Just delete".','err'); return; }
+
+  showStatus('Deleting…','info');
+
+  fetch(ORDERS_API+'/api/orders/delete',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ pin: PIN, id: o.id })
+  }).then(function(res){ return res.json(); })
+    .then(function(data){
+      if(!data.success) throw new Error(data.error || 'Delete failed.');
+      if(sendNotify){
+        return sendEmail(EMAILJS_TEMPLATE_CANCEL, {
+          to_email: o.email,
+          to_name: o.name,
+          reason: reason
+        });
+      }
+    }).then(function(){
+      showStatus('Order deleted.','ok');
+      loadOrders();
+    }).catch(function(err){
+      showStatus(err.message || 'Something went wrong.','err');
+    });
+}
+
+function sendEmail(templateId, params){
+  if(!window.emailjs || EMAILJS_SERVICE_ID.indexOf('PASTE_') === 0){
+    return Promise.resolve(); // EmailJS not configured yet — skip silently
+  }
+  return emailjs.send(EMAILJS_SERVICE_ID, templateId, params);
+}
+
+function formatDate(d){
+  try { return new Date(d).toLocaleString(); } catch(e){ return d; }
+}
+
+function esc(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/'/g,'&#39;');
+}
+
+function showStatus(msg, type){
+  var s = document.getElementById('status');
+  s.textContent = msg;
+  s.className = 'status show ' + type;
+}
+function hideStatus(){
+  document.getElementById('status').className = 'status';
+}
+
+// init
+(function(){
+  if(sessionStorage.getItem(PIN_KEY) === '1'){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('orders-view').style.display='block';
+    loadOrders();
+  }
+})();
+</script>
+</body>
+</html>
