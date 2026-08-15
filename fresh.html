@@ -250,6 +250,10 @@ var CATS=['All'];
 var activeCat='All';
 var selected={};
 
+// Orders are logged through a small backend (Cloudflare Worker) so no secret
+// keys ever have to sit in this public page. See orders.html to view/manage orders.
+var ORDERS_API = 'https://white-night-1274.brad-books78.workers.dev';
+
 function loadProducts(){
   fetch('products.json',{cache:'no-store'})
     .then(function(res){
@@ -416,6 +420,16 @@ function placeOrder(){
   var btn=document.getElementById('place-btn');
   btn.textContent='Sending...';btn.disabled=true;
 
+  // Log this order into the orders system (for the Orders page / PIN view).
+  logOrderToBackend({
+    name: name, email: email, phone: phone||'',
+    address: street+', '+city+', '+state+' '+zip+', '+country,
+    shipping: ship, giftcard: gc||'',
+    items: itemLines.join('\n'),
+    total: '$'+sub.toFixed(2),
+    notes: notes||''
+  });
+
   var formData=new FormData();
   formData.append('access_key','5876ff14-bac5-4498-a912-41c3c4b134cd');
   formData.append('subject','New Order from '+name+' - $'+sub.toFixed(2));
@@ -442,6 +456,21 @@ function placeOrder(){
     }
   }).catch(function(){
     sendMailto(name,email,phone,street,city,state,zip,country,ship,gc,notes,itemLines,sub);
+  });
+}
+
+function logOrderToBackend(order, attempt){
+  attempt = attempt || 1;
+  fetch(ORDERS_API+'/api/order',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(order)
+  }).then(function(res){
+    if(!res.ok && attempt<3){
+      setTimeout(function(){logOrderToBackend(order, attempt+1);}, 500*attempt);
+    }
+  }).catch(function(){
+    if(attempt<3){ setTimeout(function(){logOrderToBackend(order, attempt+1);}, 500*attempt); }
   });
 }
 
