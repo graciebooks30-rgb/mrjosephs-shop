@@ -358,5 +358,13 @@
     "sub": "Comfy red trucker hat",
     "emoji": "🧢",
     "cat": "Merch"
+  },
+  {
+    "id": 49,
+    "name": "Spiral doughnut",
+    "price": 5.99,
+    "sub": "",
+    "emoji": "🍩",
+    "cat": "Fidgets"
   }
 ]
